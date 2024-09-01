@@ -1,7 +1,13 @@
 package simpledb.storage;
 
+import org.jetbrains.annotations.Nullable;
+import simpledb.util.Preconditions;
+
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 /**
  * Tuple maintains information about the contents of a tuple. Tuples have a
@@ -9,34 +15,35 @@ import java.util.Iterator;
  * with the data for each field.
  */
 public class Tuple implements Serializable {
-
+    @Serial
     private static final long serialVersionUID = 1L;
+    private final Field[] fields;
+    private TupleDesc tupleDesc;
+    private RecordId recordId;
 
     /**
      * Create a new tuple with the specified schema (type).
      *
-     * @param td the schema of this tuple. It must be a valid TupleDesc
-     *           instance with at least one field.
+     * @param tupleDesc the schema of this tuple. It must be a valid TupleDesc
+     *                  instance with at least one field.
      */
-    public Tuple(TupleDesc td) {
-        // some code goes here
+    public Tuple(TupleDesc tupleDesc) {
+        this.tupleDesc = tupleDesc;
+        this.fields = new Field[tupleDesc.numFields()];
     }
 
     /**
      * @return The TupleDesc representing the schema of this tuple.
      */
     public TupleDesc getTupleDesc() {
-        // some code goes here
-        return null;
+        return tupleDesc;
     }
 
     /**
-     * @return The RecordId representing the location of this tuple on disk. May
-     * be null.
+     * @return The RecordId representing the location of this tuple on disk.
      */
-    public RecordId getRecordId() {
-        // some code goes here
-        return null;
+    public @Nullable RecordId getRecordId() {
+        return recordId;
     }
 
     /**
@@ -44,8 +51,8 @@ public class Tuple implements Serializable {
      *
      * @param rid the new RecordId for this tuple.
      */
-    public void setRecordId(RecordId rid) {
-        // some code goes here
+    public void setRecordId(@Nullable RecordId rid) {
+        this.recordId = rid;
     }
 
     /**
@@ -55,7 +62,8 @@ public class Tuple implements Serializable {
      * @param f new value for the field.
      */
     public void setField(int i, Field f) {
-        // some code goes here
+        Preconditions.checkIndex(i, fields.length);
+        fields[i] = f;
     }
 
     /**
@@ -63,8 +71,8 @@ public class Tuple implements Serializable {
      * @return the value of the ith field, or null if it has not been set.
      */
     public Field getField(int i) {
-        // some code goes here
-        return null;
+        Preconditions.checkIndex(i, fields.length);
+        return fields[i];
     }
 
     /**
@@ -75,23 +83,22 @@ public class Tuple implements Serializable {
      * <p>
      * where \t is any whitespace (except a newline)
      */
+    @Override
     public String toString() {
-        // some code goes here
-        throw new UnsupportedOperationException("Implement this");
+        return Arrays.stream(fields).map(String::valueOf).collect(Collectors.joining("\t"));
     }
 
     /**
      * @return An iterator which iterates over all the fields of this tuple
      */
     public Iterator<Field> fields() {
-        // some code goes here
-        return null;
+        return Arrays.stream(fields).iterator();
     }
 
     /**
      * reset the TupleDesc of this tuple (only affecting the TupleDesc)
      */
     public void resetTupleDesc(TupleDesc td) {
-        // some code goes here
+        this.tupleDesc = td;
     }
 }

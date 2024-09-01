@@ -65,5 +65,4 @@ public enum Type implements Serializable {
      *                        of the appropriate type.
      */
     public abstract Field parse(DataInputStream dis) throws ParseException;
-
 }
