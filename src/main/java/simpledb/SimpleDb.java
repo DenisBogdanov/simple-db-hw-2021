@@ -1,15 +1,21 @@
 package simpledb;
+
 import simpledb.common.DbException;
 import simpledb.common.Type;
 import simpledb.common.Utility;
-import simpledb.storage.*;
+import simpledb.storage.BufferPool;
+import simpledb.storage.DbFile;
+import simpledb.storage.DbFileIterator;
+import simpledb.storage.HeapFileEncoder;
+import simpledb.storage.Tuple;
 import simpledb.transaction.TransactionAbortedException;
 import simpledb.transaction.TransactionId;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 public class SimpleDb {
-    public static void main (String[] args)
+    public static void main(String[] args)
             throws DbException, TransactionAbortedException {
         // convert a file
         switch (args[0]) {

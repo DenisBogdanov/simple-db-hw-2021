@@ -1,20 +1,25 @@
 package simpledb.systemtest;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.Collections;
-
 import org.junit.Test;
-
 import simpledb.common.Database;
 import simpledb.common.DbException;
 import simpledb.common.Utility;
 import simpledb.execution.Insert;
 import simpledb.execution.SeqScan;
-import simpledb.storage.*;
+import simpledb.storage.HeapFile;
+import simpledb.storage.IntField;
+import simpledb.storage.Tuple;
+import simpledb.storage.TupleDesc;
+import simpledb.storage.TupleIterator;
 import simpledb.transaction.Transaction;
 import simpledb.transaction.TransactionAbortedException;
+
+import java.io.IOException;
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AbortEvictionTest extends SimpleDbTestBase {
     // Note: This is a direct copy of the EvictTest method,
@@ -34,7 +39,7 @@ public class AbortEvictionTest extends SimpleDbTestBase {
         insert.open();
         Tuple result = insert.next();
         assertEquals(SystemTestUtil.SINGLE_INT_DESCRIPTOR, result.getTupleDesc());
-        assertEquals(1, ((IntField)result.getField(0)).getValue());
+        assertEquals(1, ((IntField) result.getField(0)).getValue());
         assertFalse(insert.hasNext());
         insert.close();
     }
@@ -49,8 +54,8 @@ public class AbortEvictionTest extends SimpleDbTestBase {
         ss.open();
         while (ss.hasNext()) {
             Tuple v = ss.next();
-            int v0 = ((IntField)v.getField(0)).getValue();
-            int v1 = ((IntField)v.getField(1)).getValue();
+            int v0 = ((IntField) v.getField(0)).getValue();
+            int v1 = ((IntField) v.getField(1)).getValue();
             if (v0 == -42 && v1 == -43) {
                 assertFalse(found);
                 found = true;
@@ -60,13 +65,15 @@ public class AbortEvictionTest extends SimpleDbTestBase {
         return found;
     }
 
-    /** Aborts a transaction and ensures that its effects were actually undone.
+    /**
+     * Aborts a transaction and ensures that its effects were actually undone.
      * This requires dirty pages to <em>not</em> get flushed to disk.
      */
-    @Test public void testDoNotEvictDirtyPages()
+    @Test
+    public void testDoNotEvictDirtyPages()
             throws IOException, DbException, TransactionAbortedException {
         // Allocate a file with ~10 pages of data
-        HeapFile f = SystemTestUtil.createRandomHeapFile(2, 512*10, null, null);
+        HeapFile f = SystemTestUtil.createRandomHeapFile(2, 512 * 10, null, null);
         Database.resetBufferPool(2);
 
         // BEGIN TRANSACTION
@@ -90,7 +97,9 @@ public class AbortEvictionTest extends SimpleDbTestBase {
         t.commit();
     }
 
-    /** Make test compatible with older version of ant. */
+    /**
+     * Make test compatible with older version of ant.
+     */
     public static junit.framework.Test suite() {
         return new junit.framework.JUnit4TestAdapter(AbortEvictionTest.class);
     }

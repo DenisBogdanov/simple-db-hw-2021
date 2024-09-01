@@ -1,28 +1,33 @@
 package simpledb.optimizer;
 
 import simpledb.common.Database;
-import simpledb.execution.*;
+import simpledb.execution.Aggregate;
+import simpledb.execution.Aggregator;
+import simpledb.execution.Filter;
+import simpledb.execution.HashEquiJoin;
+import simpledb.execution.Join;
+import simpledb.execution.OpIterator;
+import simpledb.execution.Operator;
+import simpledb.execution.Predicate;
+import simpledb.execution.SeqScan;
 
 import java.util.Map;
 
 /**
  * A utility class, which computes the estimated cardinalities of an operator
  * tree.
- * 
+ * <p>
  * All methods have been fully provided. No extra codes are required.
  */
 public class OperatorCardinality {
 
     /**
-     * 
-     * @param tableAliasToId
-     *            table alias to table id mapping
-     * @param tableStats
-     *            table statistics
-     * */
+     * @param tableAliasToId table alias to table id mapping
+     * @param tableStats     table statistics
+     */
     public static boolean updateOperatorCardinality(Operator o,
-            Map<String, Integer> tableAliasToId,
-            Map<String, TableStats> tableStats) {
+                                                    Map<String, Integer> tableAliasToId,
+                                                    Map<String, TableStats> tableStats) {
         if (o instanceof Filter) {
             return updateFilterCardinality((Filter) o, tableAliasToId,
                     tableStats);
@@ -45,7 +50,7 @@ public class OperatorCardinality {
                     childC = ((Operator) children[0]).getEstimatedCardinality();
                 } else if (children[0] instanceof SeqScan) {
                     childC = tableStats.get(
-                            ((SeqScan) children[0]).getTableName())
+                                    ((SeqScan) children[0]).getTableName())
                             .estimateTableCardinality(1.0);
                 }
             }
@@ -55,8 +60,8 @@ public class OperatorCardinality {
     }
 
     private static boolean updateFilterCardinality(Filter f,
-            Map<String, Integer> tableAliasToId,
-            Map<String, TableStats> tableStats) {
+                                                   Map<String, Integer> tableAliasToId,
+                                                   Map<String, TableStats> tableStats) {
         OpIterator child = f.getChildren()[0];
         Predicate pred = f.getPredicate();
         String[] tmp = child.getTupleDesc().getFieldName(pred.getField())
@@ -67,7 +72,7 @@ public class OperatorCardinality {
         double selectivity = 1.0;
         if (tableId != null) {
             selectivity = tableStats.get(
-                    Database.getCatalog().getTableName(tableId))
+                            Database.getCatalog().getTableName(tableId))
                     .estimateSelectivity(
                             Database.getCatalog().getTupleDesc(tableId)
                                     .fieldNameToIndex(pureFieldName),
@@ -81,7 +86,7 @@ public class OperatorCardinality {
                 return hasJoinPK;
             } else if (child instanceof SeqScan) {
                 f.setEstimatedCardinality((int) (tableStats.get(
-                        ((SeqScan) child).getTableName())
+                                ((SeqScan) child).getTableName())
                         .estimateTableCardinality(1.0) * selectivity) + 1);
                 return false;
             }
@@ -91,8 +96,8 @@ public class OperatorCardinality {
     }
 
     private static boolean updateJoinCardinality(Join j,
-            Map<String, Integer> tableAliasToId,
-            Map<String, TableStats> tableStats) {
+                                                 Map<String, Integer> tableAliasToId,
+                                                 Map<String, TableStats> tableStats) {
 
         OpIterator[] children = j.getChildren();
         OpIterator child1 = children[0];
@@ -140,7 +145,7 @@ public class OperatorCardinality {
         }
 
         j.setEstimatedCardinality(JoinOptimizer.estimateTableJoinCardinality(j
-                .getJoinPredicate().getOperator(), tableAlias1, tableAlias2,
+                        .getJoinPredicate().getOperator(), tableAlias1, tableAlias2,
                 pureFieldName1, pureFieldName2, child1Card, child2Card,
                 child1HasJoinPK, child2HasJoinPK, tableStats, tableAliasToId));
         return child1HasJoinPK || child2HasJoinPK;
@@ -195,15 +200,15 @@ public class OperatorCardinality {
         }
 
         j.setEstimatedCardinality(JoinOptimizer.estimateTableJoinCardinality(j
-                .getJoinPredicate().getOperator(), tableAlias1, tableAlias2,
+                        .getJoinPredicate().getOperator(), tableAlias1, tableAlias2,
                 pureFieldName1, pureFieldName2, child1Card, child2Card,
                 child1HasJoinPK, child2HasJoinPK, tableStats, tableAliasToId));
         return child1HasJoinPK || child2HasJoinPK;
     }
 
     private static boolean updateAggregateCardinality(Aggregate a,
-            Map<String, Integer> tableAliasToId,
-            Map<String, TableStats> tableStats) {
+                                                      Map<String, Integer> tableAliasToId,
+                                                      Map<String, TableStats> tableStats) {
         OpIterator child = a.getChildren()[0];
         int childCard = 1;
         boolean hasJoinPK = false;
@@ -232,7 +237,7 @@ public class OperatorCardinality {
         double groupFieldAvgSelectivity = 1.0;
         if (tableId != null) {
             groupFieldAvgSelectivity = tableStats.get(
-                    Database.getCatalog().getTableName(tableId))
+                            Database.getCatalog().getTableName(tableId))
                     .avgSelectivity(
                             Database.getCatalog().getTupleDesc(tableId)
                                     .fieldNameToIndex(pureFieldName),

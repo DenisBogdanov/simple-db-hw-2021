@@ -1,49 +1,57 @@
 package simpledb;
 
-import simpledb.systemtest.SimpleDbTestBase;
-import simpledb.systemtest.SystemTestUtil;
+import junit.framework.JUnit4TestAdapter;
+import org.junit.Before;
+import org.junit.Test;
 import simpledb.common.Database;
 import simpledb.common.Utility;
-import simpledb.storage.*;
+import simpledb.storage.BufferPool;
+import simpledb.storage.HeapFileEncoder;
+import simpledb.storage.HeapPage;
+import simpledb.storage.HeapPageId;
+import simpledb.storage.IntField;
+import simpledb.storage.Tuple;
+import simpledb.systemtest.SimpleDbTestBase;
+import simpledb.systemtest.SystemTestUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import junit.framework.JUnit4TestAdapter;
 
 public class HeapPageReadTest extends SimpleDbTestBase {
     private HeapPageId pid;
 
-    public static final int[][] EXAMPLE_VALUES = new int[][] {
-        { 31933, 862 },
-        { 29402, 56883 },
-        { 1468, 5825 },
-        { 17876, 52278 },
-        { 6350, 36090 },
-        { 34784, 43771 },
-        { 28617, 56874 },
-        { 19209, 23253 },
-        { 56462, 24979 },
-        { 51440, 56685 },
-        { 3596, 62307 },
-        { 45569, 2719 },
-        { 22064, 43575 },
-        { 42812, 44947 },
-        { 22189, 19724 },
-        { 33549, 36554 },
-        { 9086, 53184 },
-        { 42878, 33394 },
-        { 62778, 21122 },
-        { 17197, 16388 }
+    public static final int[][] EXAMPLE_VALUES = new int[][]{
+            {31933, 862},
+            {29402, 56883},
+            {1468, 5825},
+            {17876, 52278},
+            {6350, 36090},
+            {34784, 43771},
+            {28617, 56874},
+            {19209, 23253},
+            {56462, 24979},
+            {51440, 56685},
+            {3596, 62307},
+            {45569, 2719},
+            {22064, 43575},
+            {42812, 44947},
+            {22189, 19724},
+            {33549, 36554},
+            {9086, 53184},
+            {42878, 33394},
+            {62778, 21122},
+            {17197, 16388}
     };
 
     public static final byte[] EXAMPLE_DATA;
+
     static {
         // Build the input table
         List<List<Integer>> table = new ArrayList<>();
@@ -69,7 +77,8 @@ public class HeapPageReadTest extends SimpleDbTestBase {
     /**
      * Set up initial resources for each unit test.
      */
-    @Before public void addTable() {
+    @Before
+    public void addTable() {
         this.pid = new HeapPageId(-1, -1);
         Database.getCatalog().addTable(new TestUtil.SkeletonFile(-1, Utility.getTupleDesc(2)), SystemTestUtil.getUUID());
     }
@@ -77,7 +86,8 @@ public class HeapPageReadTest extends SimpleDbTestBase {
     /**
      * Unit test for HeapPage.getId()
      */
-    @Test public void getId() throws Exception {
+    @Test
+    public void getId() throws Exception {
         HeapPage page = new HeapPage(pid, EXAMPLE_DATA);
         assertEquals(pid, page.getId());
     }
@@ -85,7 +95,8 @@ public class HeapPageReadTest extends SimpleDbTestBase {
     /**
      * Unit test for HeapPage.iterator()
      */
-    @Test public void testIterator() throws Exception {
+    @Test
+    public void testIterator() throws Exception {
         HeapPage page = new HeapPage(pid, EXAMPLE_DATA);
         Iterator<Tuple> it = page.iterator();
 
@@ -104,7 +115,8 @@ public class HeapPageReadTest extends SimpleDbTestBase {
     /**
      * Unit test for HeapPage.getNumEmptySlots()
      */
-    @Test public void getNumEmptySlots() throws Exception {
+    @Test
+    public void getNumEmptySlots() throws Exception {
         HeapPage page = new HeapPage(pid, EXAMPLE_DATA);
         assertEquals(484, page.getNumEmptySlots());
     }
@@ -112,7 +124,8 @@ public class HeapPageReadTest extends SimpleDbTestBase {
     /**
      * Unit test for HeapPage.isSlotUsed()
      */
-    @Test public void getSlot() throws Exception {
+    @Test
+    public void getSlot() throws Exception {
         HeapPage page = new HeapPage(pid, EXAMPLE_DATA);
 
         for (int i = 0; i < 20; ++i)

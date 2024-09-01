@@ -1,19 +1,27 @@
 package simpledb;
 
-import simpledb.systemtest.SimpleDbTestBase;
-import simpledb.systemtest.SystemTestUtil;
-import simpledb.common.Database;
-import simpledb.common.Utility;
-import simpledb.storage.*;
-
-import java.util.*;
+import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-import junit.framework.JUnit4TestAdapter;
+import simpledb.common.Database;
+import simpledb.common.Utility;
+import simpledb.storage.DbFileIterator;
+import simpledb.storage.HeapFile;
+import simpledb.storage.HeapPage;
+import simpledb.storage.HeapPageId;
+import simpledb.storage.TupleDesc;
+import simpledb.systemtest.SimpleDbTestBase;
+import simpledb.systemtest.SystemTestUtil;
 import simpledb.transaction.TransactionId;
+
+import java.util.NoSuchElementException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class HeapFileReadTest extends SimpleDbTestBase {
     private HeapFile hf;
@@ -55,8 +63,9 @@ public class HeapFileReadTest extends SimpleDbTestBase {
      */
     @Test
     public void getTupleDesc() {
-        assertEquals(td, hf.getTupleDesc());        
+        assertEquals(td, hf.getTupleDesc());
     }
+
     /**
      * Unit test for HeapFile.numPages()
      */

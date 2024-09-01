@@ -1,15 +1,35 @@
 package simpledb;
 
-import simpledb.common.*;
+import simpledb.common.Database;
+import simpledb.common.DbException;
+import simpledb.common.Permissions;
+import simpledb.common.Type;
+import simpledb.common.Utility;
 import simpledb.execution.OpIterator;
-import simpledb.storage.*;
+import simpledb.storage.DbFile;
+import simpledb.storage.DbFileIterator;
+import simpledb.storage.Field;
+import simpledb.storage.HeapFile;
+import simpledb.storage.IntField;
+import simpledb.storage.Page;
+import simpledb.storage.PageId;
+import simpledb.storage.StringField;
+import simpledb.storage.Tuple;
+import simpledb.storage.TupleDesc;
+import simpledb.storage.TupleIterator;
 import simpledb.transaction.TransactionAbortedException;
 import simpledb.transaction.TransactionId;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestUtil {
     /**
@@ -20,11 +40,11 @@ public class TestUtil {
     }
 
     /**
-     * @return a OpIterator over a list of tuples constructed over the data
-     *   provided in the constructor. This iterator is already open.
-     * @param width the number of fields in each tuple
+     * @param width   the number of fields in each tuple
      * @param tupdata an array such that the ith element the jth tuple lives
-     *   in slot j * width + i
+     *                in slot j * width + i
+     * @return a OpIterator over a list of tuples constructed over the data
+     * provided in the constructor. This iterator is already open.
      * @require tupdata.length % width == 0
      */
     public static TupleIterator createTupleList(int width, int[] tupdata) {
@@ -43,18 +63,18 @@ public class TestUtil {
     }
 
     /**
-     * @return a OpIterator over a list of tuples constructed over the data
-     *   provided in the constructor. This iterator is already open.
-     * @param width the number of fields in each tuple
+     * @param width   the number of fields in each tuple
      * @param tupdata an array such that the ith element the jth tuple lives
-     *   in slot j * width + i.  Objects can be strings or ints;  tuples must all be of same type.
+     *                in slot j * width + i.  Objects can be strings or ints;  tuples must all be of same type.
+     * @return a OpIterator over a list of tuples constructed over the data
+     * provided in the constructor. This iterator is already open.
      * @require tupdata.length % width == 0
      */
     public static TupleIterator createTupleList(int width, Object[] tupdata) {
         List<Tuple> tuplist = new ArrayList<>();
         TupleDesc td;
         Type[] types = new Type[width];
-        int i= 0;
+        int i = 0;
         for (int j = 0; j < width; j++) {
             if (tupdata[j] instanceof String) {
                 types[j] = Type.STRING_TYPE;
@@ -71,9 +91,9 @@ public class TestUtil {
                 Field f;
                 Object t = tupdata[i++];
                 if (t instanceof String)
-                    f = new StringField((String)t, Type.STRING_LEN); 
+                    f = new StringField((String) t, Type.STRING_LEN);
                 else
-                    f = new IntField((Integer)t);
+                    f = new IntField((Integer) t);
 
                 tup.setField(j, f);
             }
@@ -87,7 +107,7 @@ public class TestUtil {
 
     /**
      * @return true iff the tuples have the same number of fields and
-     *   corresponding fields in the two Tuples are all equal.
+     * corresponding fields in the two Tuples are all equal.
      */
     public static boolean compareTuples(Tuple t1, Tuple t2) {
         if (t1.getTupleDesc().numFields() != t2.getTupleDesc().numFields())
@@ -105,7 +125,7 @@ public class TestUtil {
 
     /**
      * Check to see if the DbIterators have the same number of tuples and
-     *   each tuple pair in parallel iteration satisfies compareTuples .
+     * each tuple pair in parallel iteration satisfies compareTuples .
      * If not, throw an assertion.
      */
     public static void compareDbIterators(OpIterator expected, OpIterator actual)
@@ -124,7 +144,7 @@ public class TestUtil {
 
     /**
      * Check to see if every tuple in expected matches <b>some</b> tuple
-     *   in actual via compareTuples. Note that actual may be a superset.
+     * in actual via compareTuples. Note that actual may be a superset.
      * If not, throw an assertion.
      */
     public static void matchAllTuples(OpIterator expected, OpIterator actual) throws
@@ -155,7 +175,7 @@ public class TestUtil {
      * Verifies that the OpIterator has been exhausted of all elements.
      */
     public static boolean checkExhausted(OpIterator it)
-        throws TransactionAbortedException, DbException {
+            throws TransactionAbortedException, DbException {
 
         if (it.hasNext()) return false;
 
@@ -179,7 +199,7 @@ public class TestUtil {
         int offset = 0;
         int count = 0;
         while (offset < buf.length
-               && (count = is.read(buf, offset, buf.length - offset)) >= 0) {
+                && (count = is.read(buf, offset, buf.length - offset)) >= 0) {
             offset += count;
         }
 
@@ -236,9 +256,9 @@ public class TestUtil {
             throw new RuntimeException("not implemented");
         }
 
-		public TupleDesc getTupleDesc() {			
-			return td;
-		}
+        public TupleDesc getTupleDesc() {
+            return td;
+        }
     }
 
     /**
@@ -287,18 +307,18 @@ public class TestUtil {
             return tup;
         }
 
-		public boolean hasNext() {
+        public boolean hasNext() {
             return cur < high;
         }
 
-		public Tuple next() throws NoSuchElementException {
-			if(cur >= high) throw new NoSuchElementException();
+        public Tuple next() throws NoSuchElementException {
+            if (cur >= high) throw new NoSuchElementException();
             Tuple tup = new Tuple(getTupleDesc());
             for (int i = 0; i < width; ++i)
                 tup.setField(i, new IntField(cur));
             cur++;
             return tup;
-		}
+        }
     }
 
     /**
@@ -306,7 +326,7 @@ public class TestUtil {
      * thread.
      *
      * @return a handle to the Thread that will attempt lock acquisition after it
-     *   has been started
+     * has been started
      */
     static class LockGrabber extends Thread {
 
@@ -319,8 +339,8 @@ public class TestUtil {
         final Object elock;
 
         /**
-         * @param tid the transaction on whose behalf we want to acquire the lock
-         * @param pid the page over which we want to acquire the lock
+         * @param tid  the transaction on whose behalf we want to acquire the lock
+         * @param pid  the page over which we want to acquire the lock
          * @param perm the desired lock permissions
          */
         public LockGrabber(TransactionId tid, PageId pid, Permissions perm) {
@@ -336,12 +356,12 @@ public class TestUtil {
         public void run() {
             try {
                 Database.getBufferPool().getPage(tid, pid, perm);
-                synchronized(alock) {
+                synchronized (alock) {
                     acquired = true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                synchronized(elock) {
+                synchronized (elock) {
                     error = e;
                 }
 
@@ -353,26 +373,28 @@ public class TestUtil {
          * @return true if we successfully acquired the specified lock
          */
         public boolean acquired() {
-            synchronized(alock) {
+            synchronized (alock) {
                 return acquired;
             }
         }
 
         /**
          * @return an Exception instance if one occured during lock acquisition;
-         *   null otherwise
+         * null otherwise
          */
         public Exception getError() {
-            synchronized(elock) {
+            synchronized (elock) {
                 return error;
             }
         }
     }
 
-    /** JUnit fixture that creates a heap file and cleans it up afterward. */
+    /**
+     * JUnit fixture that creates a heap file and cleans it up afterward.
+     */
     public static abstract class CreateHeapFile {
         protected CreateHeapFile() {
-            try{
+            try {
                 emptyFile = File.createTempFile("empty", ".dat");
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -381,8 +403,8 @@ public class TestUtil {
         }
 
         protected void setUp() throws Exception {
-            try{
-            	Database.reset();
+            try {
+                Database.reset();
                 empty = Utility.createEmptyHeapFile(emptyFile.getAbsolutePath(), 2);
             } catch (IOException e) {
                 throw new RuntimeException(e);

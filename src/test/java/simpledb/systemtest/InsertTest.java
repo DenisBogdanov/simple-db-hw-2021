@@ -1,10 +1,5 @@
 package simpledb.systemtest;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
 import org.junit.Test;
 import simpledb.common.Database;
 import simpledb.common.DbException;
@@ -16,9 +11,17 @@ import simpledb.storage.Tuple;
 import simpledb.transaction.TransactionAbortedException;
 import simpledb.transaction.TransactionId;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class InsertTest extends SimpleDbTestBase {
     private void validateInsert(int columns, int sourceRows, int destinationRows)
-                throws DbException, IOException, TransactionAbortedException {
+            throws DbException, IOException, TransactionAbortedException {
         // Create the two tables
         List<List<Integer>> sourceTuples = new ArrayList<>();
         HeapFile source = SystemTestUtil.createRandomHeapFile(
@@ -57,27 +60,33 @@ public class InsertTest extends SimpleDbTestBase {
         SystemTestUtil.matchTuples(destination, sourceTuples);
     }
 
-    @Test public void testEmptyToEmpty()
+    @Test
+    public void testEmptyToEmpty()
             throws IOException, DbException, TransactionAbortedException {
         validateInsert(3, 0, 0);
     }
 
-    @Test public void testEmptyToOne()
+    @Test
+    public void testEmptyToOne()
             throws IOException, DbException, TransactionAbortedException {
         validateInsert(8, 0, 1);
     }
 
-    @Test public void testOneToEmpty()
+    @Test
+    public void testOneToEmpty()
             throws IOException, DbException, TransactionAbortedException {
         validateInsert(3, 1, 0);
     }
 
-    @Test public void testOneToOne()
+    @Test
+    public void testOneToOne()
             throws IOException, DbException, TransactionAbortedException {
         validateInsert(1, 1, 1);
     }
 
-    /** Make test compatible with older version of ant. */
+    /**
+     * Make test compatible with older version of ant.
+     */
     public static junit.framework.Test suite() {
         return new junit.framework.JUnit4TestAdapter(InsertTest.class);
     }
