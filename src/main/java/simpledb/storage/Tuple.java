@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class Tuple implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     private final Field[] fields;
     private TupleDesc tupleDesc;
     private RecordId recordId;

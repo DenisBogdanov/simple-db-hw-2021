@@ -1,28 +1,39 @@
 package simpledb.common;
 
+import org.jetbrains.annotations.NotNull;
 import simpledb.storage.DbFile;
 import simpledb.storage.HeapFile;
 import simpledb.storage.TupleDesc;
+import simpledb.util.Preconditions;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 /**
+ * <p>
  * The Catalog keeps track of all available tables in the database and their
  * associated schemas.
  * For now, this is a stub catalog that must be populated with tables by a
  * user program before it can be used -- eventually, this should be converted
  * to a catalog that reads a catalog table from disk.
+ * </p>
+ * <p>
+ * The content of {@link tableIdToTableMap} and {@link tableNameToFileIdMap} should be consistent.
+ * </p>
  *
- * @Threadsafe
+ * @Threadsafe ToDo: not thread-safe yet
  */
 public class Catalog {
+    private final Map<Integer, Table> tableIdToTableMap = new HashMap<>();
+    private final Map<String, Integer> tableNameToFileIdMap = new HashMap<>();
 
     /**
      * Constructor.
@@ -43,7 +54,12 @@ public class Catalog {
      * @param pkeyField the name of the primary key field
      */
     public void addTable(DbFile file, String name, String pkeyField) {
-        // some code goes here
+        Integer existingTableId = tableNameToFileIdMap.remove(name);
+        if (existingTableId != null) {
+            tableIdToTableMap.remove(existingTableId);
+        }
+        tableNameToFileIdMap.put(name, file.getId());
+        tableIdToTableMap.put(file.getId(), new Table(file, name, pkeyField));
     }
 
     public void addTable(DbFile file, String name) {
@@ -68,8 +84,9 @@ public class Catalog {
      * @throws NoSuchElementException if the table doesn't exist
      */
     public int getTableId(String name) throws NoSuchElementException {
-        // some code goes here
-        return 0;
+        Integer tableId = tableNameToFileIdMap.get(name);
+        Preconditions.checkValueExists(tableId);
+        return tableId;
     }
 
     /**
@@ -80,8 +97,7 @@ public class Catalog {
      * @throws NoSuchElementException if the table doesn't exist
      */
     public TupleDesc getTupleDesc(int tableid) throws NoSuchElementException {
-        // some code goes here
-        return null;
+        return getTable(tableid).dbFile().getTupleDesc();
     }
 
     /**
@@ -92,30 +108,35 @@ public class Catalog {
      *                function passed to addTable
      */
     public DbFile getDatabaseFile(int tableid) throws NoSuchElementException {
-        // some code goes here
-        return null;
+        return getTable(tableid).dbFile();
     }
 
     public String getPrimaryKey(int tableid) {
-        // some code goes here
-        return null;
+        return getTable(tableid).pkeyField();
+    }
+
+    @NotNull
+    private Table getTable(int tableid) {
+        Table table = tableIdToTableMap.get(tableid);
+        Preconditions.checkValueExists(table);
+        return table;
     }
 
     public Iterator<Integer> tableIdIterator() {
-        // some code goes here
-        return null;
+        return tableIdToTableMap.keySet().iterator();
     }
 
     public String getTableName(int id) {
-        // some code goes here
-        return null;
+        Table table = getTable(id);
+        return table.name();
     }
 
     /**
      * Delete all tables from the catalog
      */
     public void clear() {
-        // some code goes here
+        tableIdToTableMap.clear();
+        tableNameToFileIdMap.clear();
     }
 
     /**
@@ -172,6 +193,9 @@ public class Catalog {
             System.out.println("Invalid catalog entry : " + line);
             System.exit(0);
         }
+    }
+
+    private record Table(@NotNull DbFile dbFile, String name, String pkeyField) {
     }
 }
 
