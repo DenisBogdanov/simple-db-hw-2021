@@ -64,7 +64,7 @@ public class ScanTest extends SimpleDbTestBase {
     @Test
     public void testRewind() throws IOException, DbException, TransactionAbortedException {
         List<List<Integer>> tuples = new ArrayList<>();
-        HeapFile f = SystemTestUtil.createRandomHeapFile(2, 1000, null, tuples);
+        HeapFile f = SystemTestUtil.createRandomHeapFile(2, 1_000, null, tuples);
 
         TransactionId tid = new TransactionId();
         SeqScan scan = new SeqScan(tid, f.getId(), "table");
@@ -87,14 +87,13 @@ public class ScanTest extends SimpleDbTestBase {
 
     /**
      * Verifies that the buffer pool is actually caching data.
-     *
-     * @throws TransactionAbortedException
-     * @throws DbException
      */
     @Test
     public void testCache() throws IOException, DbException, TransactionAbortedException {
         /* Counts the number of readPage operations. */
         class InstrumentedHeapFile extends HeapFile {
+            int readCount = 0;
+
             public InstrumentedHeapFile(File f, TupleDesc td) {
                 super(f, td);
             }
@@ -104,14 +103,12 @@ public class ScanTest extends SimpleDbTestBase {
                 readCount += 1;
                 return super.readPage(pid);
             }
-
-            public int readCount = 0;
         }
 
         // Create the table
         final int PAGES = 30;
         List<List<Integer>> tuples = new ArrayList<>();
-        File f = SystemTestUtil.createRandomHeapFileUnopened(1, 992 * PAGES, 1000, null, tuples);
+        File f = SystemTestUtil.createRandomHeapFileUnopened(1, 992 * PAGES, 1_000, null, tuples);
         TupleDesc td = Utility.getTupleDesc(1);
         InstrumentedHeapFile table = new InstrumentedHeapFile(f, td);
         Database.getCatalog().addTable(table, SystemTestUtil.getUUID());
@@ -128,8 +125,6 @@ public class ScanTest extends SimpleDbTestBase {
 
     /**
      * Verifies SeqScan's getTupleDesc prefixes the table name + "." to the field names
-     *
-     * @throws IOException
      */
     @Test
     public void testTupleDesc() throws IOException {

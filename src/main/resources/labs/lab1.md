@@ -558,7 +558,7 @@ At this point, your code should pass the unit tests in HeapFileReadTest.
 ### 2.6. Operators
 
 Operators are responsible for the actual execution of the query plan. They implement the operations of the relational
-algebra. In SimpleDB, operators are iterator based; each operator implements the `DbIterator` interface.
+algebra. In SimpleDB, operators are iterator based; each operator implements the `OpIterator` interface.
 
 <p>
 

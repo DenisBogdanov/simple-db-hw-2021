@@ -113,6 +113,7 @@ public class HeapFile implements DbFile {
     @Override
     public DbFileIterator iterator(TransactionId tid) {
         int heapFileId = getId();
+        int numPages = this.numPages();
 
         return new AbstractDbFileIterator() {
             private int pageIndex;
@@ -123,6 +124,7 @@ public class HeapFile implements DbFile {
             protected Tuple readNext() throws DbException, TransactionAbortedException {
                 if (!isOpened) return null;
                 if (iterator != null && iterator.hasNext()) return iterator.next();
+                if (pageIndex >= numPages) return null;
                 HeapPageId pageId = new HeapPageId(heapFileId, pageIndex);
                 pageIndex++;
                 HeapPage page = (HeapPage) Database.getBufferPool().getPage(tid, pageId, Permissions.READ_ONLY);
@@ -139,6 +141,7 @@ public class HeapFile implements DbFile {
             @Override
             public void close() {
                 super.close();
+                iterator = null;
                 isOpened = false;
             }
 
