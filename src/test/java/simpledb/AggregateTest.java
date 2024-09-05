@@ -96,7 +96,7 @@ public class AggregateTest extends SimpleDbTestBase {
         // Int, Int TupleDesc
         Aggregate op = new Aggregate(scan1, 0, 0,
                 Aggregator.Op.MIN);
-        TupleDesc expected = Utility.getTupleDesc(2);
+        TupleDesc expected = Utility.getIntTupleDesc(2);
         TupleDesc actual = op.getTupleDesc();
         assertEquals(expected, actual);
 

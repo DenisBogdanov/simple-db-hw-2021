@@ -33,7 +33,7 @@ public class BTreeHeaderPageTest extends SimpleDbTestBase {
     @Before
     public void addTable() {
         this.pid = new BTreePageId(-1, -1, BTreePageId.HEADER);
-        Database.getCatalog().addTable(new SkeletonFile(-1, Utility.getTupleDesc(2)), SystemTestUtil.getUUID());
+        Database.getCatalog().addTable(new SkeletonFile(-1, Utility.getIntTupleDesc(2)), SystemTestUtil.getUUID());
     }
 
     /**

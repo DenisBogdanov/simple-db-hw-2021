@@ -35,7 +35,7 @@ public class FilterTest extends SimpleDbTestBase {
     public void getTupleDesc() {
         Predicate pred = new Predicate(0, Predicate.Op.EQUALS, TestUtil.getField(0));
         Filter op = new Filter(pred, scan);
-        TupleDesc expected = Utility.getTupleDesc(testWidth);
+        TupleDesc expected = Utility.getIntTupleDesc(testWidth);
         TupleDesc actual = op.getTupleDesc();
         assertEquals(expected, actual);
     }

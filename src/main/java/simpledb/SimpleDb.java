@@ -106,5 +106,4 @@ public class SimpleDb {
                 System.exit(1);
         }
     }
-
 }

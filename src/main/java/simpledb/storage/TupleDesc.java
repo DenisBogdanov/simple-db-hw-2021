@@ -3,94 +3,95 @@ package simpledb.storage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import simpledb.common.Type;
+import simpledb.common.annotations.Immutable;
 import simpledb.util.Preconditions;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
- * TupleDesc describes the schema of a tuple.
+ * <strong>Tuple descriptor</strong> defines the schema of a tuple.
  */
+@Immutable
 public class TupleDesc implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private final List<TDItem> items;
+    private final int totalSize;
 
     /**
-     * Create a new TupleDesc with typeAr.length fields with fields of the
-     * specified types, with associated named fields.
+     * Create a new {@code TupleDesc} with {@code types.length} fields with specified types and associated field names.
      *
-     * @param typeAr  array specifying the number of and types of fields in this
-     *                TupleDesc. It must contain at least one entry.
-     * @param fieldAr array specifying the names of the fields. Note that names may
-     *                be null.
+     * @param types  array specifying the number of and types of fields in this {@code TupleDesc}.
+     *               It must contain at least one entry.
+     * @param fields array specifying the names of the fields. Note that names may be {@code null}.
      */
-    public TupleDesc(Type[] typeAr, String[] fieldAr) {
-        items = new ArrayList<>(typeAr.length);
-        for (int i = 0; i < typeAr.length; i++) {
-            items.add(new TDItem(typeAr[i], fieldAr[i]));
-        }
+    public TupleDesc(Type[] types, String[] fields) {
+        items = IntStream.range(0, types.length)
+                .mapToObj(i -> new TDItem(types[i], fields[i]))
+                .toList();
+
+        totalSize = calcSize(types);
     }
 
     /**
-     * Constructor. Create a new tuple desc with typeAr.length fields with
-     * fields of the specified types, with anonymous (unnamed) fields.
+     * Create a new {@code TupleDesc} with {@code types.length} fields with fields of the specified types,
+     * with anonymous (unnamed) fields.
      *
-     * @param typeAr
-     *            array specifying the number of and types of fields in this
-     *            TupleDesc. It must contain at least one entry.
+     * @param types array specifying the number of and types of fields in this {@code TupleDesc}.
+     *              It must contain at least one entry.
      */
-    public TupleDesc(Type[] typeAr) {
-        items = new ArrayList<>(typeAr.length);
-        for (Type type : typeAr) {
-            items.add(new TDItem(type, null));
+    public TupleDesc(Type[] types) {
+        items = Arrays.stream(types).map(type -> new TDItem(type, null)).toList();
+        totalSize = calcSize(types);
+    }
+
+    private TupleDesc(List<TDItem> items, int totalSize) {
+        this.items = items;
+        this.totalSize = totalSize;
+    }
+
+    private static int calcSize(Type[] types) {
+        int size = 0;
+        for (Type type : types) {
+            size += type.getLen();
         }
+        return size;
     }
 
     /**
-     * Merge two TupleDescs into one, with td1.numFields + td2.numFields fields,
-     * with the first td1.numFields coming from td1 and the remaining from td2.
+     * Merge two {@code TupleDesc}s into one, with {@code td1.numFields + td2.numFields} fields,
+     * with the first {@code td1.numFields} coming from {@code td1} and the remaining from {@code td2}.
      *
-     * @param td1 The TupleDesc with the first fields of the new TupleDesc
-     * @param td2 The TupleDesc with the last fields of the TupleDesc
-     * @return the new TupleDesc
+     * @param td1 The {@code TupleDesc} with the first fields of the new {@code TupleDesc}
+     * @param td2 The {@code TupleDesc} with the last fields of the {@code TupleDesc}
+     * @return the new {@code TupleDesc}
      */
     public static TupleDesc merge(TupleDesc td1, TupleDesc td2) {
-        var items1 = td1.items;
-        var items2 = td2.items;
-        var types = new Type[items1.size() + items2.size()];
-        var names = new String[items1.size() + items2.size()];
-        int index = 0;
-        for (TDItem tdItem : items1) {
-            types[index] = tdItem.fieldType;
-            names[index] = tdItem.fieldName;
-            index++;
-        }
-        for (TDItem tdItem : items2) {
-            types[index] = tdItem.fieldType;
-            names[index] = tdItem.fieldName;
-            index++;
-        }
-        return new TupleDesc(types, names);
+        List<TDItem> items = Stream.of(td1.items, td2.items)
+                .flatMap(List::stream)
+                .toList();
+        return new TupleDesc(items, td1.getSize() + td2.getSize());
     }
 
     /**
-     * @return An iterator which iterates over all the field TDItems
-     * that are included in this TupleDesc
+     * @return An iterator which iterates over all the field TDItems that are included in this {@code TupleDesc}.
      */
     public Iterator<TDItem> iterator() {
         return items.iterator();
     }
 
     /**
-     * @return the number of fields in this TupleDesc
+     * @return the number of fields in this {@code TupleDesc}.
      */
     public int numFields() {
         return items.size();
@@ -141,22 +142,9 @@ public class TupleDesc implements Serializable {
      * Note that tuples from a given TupleDesc are of a fixed size.
      */
     public int getSize() {
-        int size = 0;
-        for (TDItem item : items) {
-            size += item.fieldType.getLen();
-        }
-        return size;
+        return totalSize;
     }
 
-    /**
-     * Compares the specified object with this TupleDesc for equality. Two
-     * TupleDescs are considered equal if they have the same number of items
-     * and if the i-th type in this TupleDesc is equal to the i-th type in o
-     * for every i.
-     *
-     * @param o the Object to be compared for equality with this TupleDesc.
-     * @return true if the object is equal to this TupleDesc.
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -170,38 +158,29 @@ public class TupleDesc implements Serializable {
         return Objects.hash(items);
     }
 
-    /**
-     * Returns a String describing this descriptor. It should be of the form
-     * "fieldType[0](fieldName[0]), ..., fieldType[M](fieldName[M])", although
-     * the exact format does not matter.
-     *
-     * @return String describing this descriptor.
-     */
+    @Override
     public String toString() {
         return items.stream().map(String::valueOf).collect(Collectors.joining(","));
     }
 
     /**
-     * A help class to facilitate organizing the information of each field
+     * Organizes the information of each field.
      */
+    @Immutable
     public static class TDItem implements Serializable {
-
         @Serial
         private static final long serialVersionUID = 1L;
 
-        /**
-         * The type of the field
-         */
-        public final Type fieldType;
+        private final Type fieldType;
+        private final String fieldName;
 
-        /**
-         * The name of the field
-         */
-        public final String fieldName;
+        private TDItem(@NotNull Type fieldType, @Nullable String fieldName) {
+            this.fieldType = fieldType;
+            this.fieldName = fieldName;
+        }
 
-        public TDItem(@NotNull Type t, @Nullable String n) {
-            this.fieldName = n;
-            this.fieldType = t;
+        public String getFieldName() {
+            return fieldName;
         }
 
         @Override

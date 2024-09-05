@@ -63,7 +63,7 @@ public class BTreeLeafPageTest extends SimpleDbTestBase {
         // Build the input table
         List<Tuple> tuples = new ArrayList<>();
         for (int[] tuple : EXAMPLE_VALUES) {
-            Tuple tup = new Tuple(Utility.getTupleDesc(2));
+            Tuple tup = new Tuple(Utility.getIntTupleDesc(2));
             for (int i = 0; i < tuple.length; i++) {
                 tup.setField(i, new IntField(tuple[i]));
             }
@@ -85,7 +85,7 @@ public class BTreeLeafPageTest extends SimpleDbTestBase {
     @Before
     public void addTable() {
         this.pid = new BTreePageId(-1, -1, BTreePageId.LEAF);
-        Database.getCatalog().addTable(new SkeletonFile(-1, Utility.getTupleDesc(2)), SystemTestUtil.getUUID());
+        Database.getCatalog().addTable(new SkeletonFile(-1, Utility.getIntTupleDesc(2)), SystemTestUtil.getUUID());
     }
 
     /**
@@ -191,7 +191,7 @@ public class BTreeLeafPageTest extends SimpleDbTestBase {
 
         List<Tuple> tuples = new ArrayList<>();
         for (int[] tuple : EXAMPLE_VALUES) {
-            Tuple tup = new Tuple(Utility.getTupleDesc(2));
+            Tuple tup = new Tuple(Utility.getIntTupleDesc(2));
             for (int i = 0; i < tuple.length; i++) {
                 tup.setField(i, new IntField(tuple[i]));
             }
@@ -263,7 +263,7 @@ public class BTreeLeafPageTest extends SimpleDbTestBase {
         // insert tuples into both pages
         List<Tuple> tuples = new ArrayList<>();
         for (int[] tuple : EXAMPLE_VALUES) {
-            Tuple tup = new Tuple(Utility.getTupleDesc(2));
+            Tuple tup = new Tuple(Utility.getIntTupleDesc(2));
             for (int i = 0; i < tuple.length; i++) {
                 tup.setField(i, new IntField(tuple[i]));
             }

@@ -50,7 +50,7 @@ public class BTreeUtility {
      * RecordId(BTreePageId(1,2, BTreePageId.LEAF), 3)
      */
     public static Tuple getBTreeTuple(int n) {
-        Tuple tup = new Tuple(Utility.getTupleDesc(1));
+        Tuple tup = new Tuple(Utility.getIntTupleDesc(1));
         tup.setRecordId(new RecordId(new BTreePageId(1, 2, BTreePageId.LEAF), 3));
         tup.setField(0, new IntField(n));
         return tup;
@@ -61,7 +61,7 @@ public class BTreeUtility {
      * and RecordId(BTreePageId(1, 2, BTreePageId.LEAF), 3)
      */
     public static Tuple getBTreeTuple(int[] tupdata) {
-        Tuple tup = new Tuple(Utility.getTupleDesc(tupdata.length));
+        Tuple tup = new Tuple(Utility.getIntTupleDesc(tupdata.length));
         tup.setRecordId(new RecordId(new BTreePageId(1, 2, BTreePageId.LEAF), 3));
         for (int i = 0; i < tupdata.length; ++i)
             tup.setField(i, new IntField(tupdata[i]));
@@ -73,7 +73,7 @@ public class BTreeUtility {
      * and RecordId(BTreePageId(1, 2, BTreePageId.LEAF), 3)
      */
     public static Tuple getBTreeTuple(List<Integer> tupdata) {
-        Tuple tup = new Tuple(Utility.getTupleDesc(tupdata.size()));
+        Tuple tup = new Tuple(Utility.getIntTupleDesc(tupdata.size()));
         tup.setRecordId(new RecordId(new BTreePageId(1, 2, BTreePageId.LEAF), 3));
         for (int i = 0; i < tupdata.size(); ++i)
             tup.setField(i, new IntField(tupdata.get(i)));
@@ -85,7 +85,7 @@ public class BTreeUtility {
      * with RecordId(BTreePageId(1, 2, BTreePageId.LEAF), 3)
      */
     public static Tuple getBTreeTuple(int n, int width) {
-        Tuple tup = new Tuple(Utility.getTupleDesc(width));
+        Tuple tup = new Tuple(Utility.getIntTupleDesc(width));
         tup.setRecordId(new RecordId(new BTreePageId(1, 2, BTreePageId.LEAF), 3));
         for (int i = 0; i < width; ++i)
             tup.setField(i, new IntField(n));
@@ -452,7 +452,7 @@ public class BTreeUtility {
      */
     public static BTreeFile openBTreeFile(int cols, File f, int keyField) {
         // create the BTreeFile and add it to the catalog
-        TupleDesc td = Utility.getTupleDesc(cols);
+        TupleDesc td = Utility.getIntTupleDesc(cols);
         BTreeFile bf = new BTreeFile(f, keyField, td);
         Database.getCatalog().addTable(bf, UUID.randomUUID().toString());
         return bf;
@@ -460,7 +460,7 @@ public class BTreeUtility {
 
     public static BTreeFile openBTreeFile(int cols, String colPrefix, File f, int keyField) {
         // create the BTreeFile and add it to the catalog
-        TupleDesc td = Utility.getTupleDesc(cols, colPrefix);
+        TupleDesc td = Utility.getIntTupleDesc(cols, colPrefix);
         BTreeFile bf = new BTreeFile(f, keyField, td);
         Database.getCatalog().addTable(bf, UUID.randomUUID().toString());
         return bf;

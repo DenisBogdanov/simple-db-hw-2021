@@ -109,7 +109,7 @@ public class ScanTest extends SimpleDbTestBase {
         final int PAGES = 30;
         List<List<Integer>> tuples = new ArrayList<>();
         File f = SystemTestUtil.createRandomHeapFileUnopened(1, 992 * PAGES, 1_000, null, tuples);
-        TupleDesc td = Utility.getTupleDesc(1);
+        TupleDesc td = Utility.getIntTupleDesc(1);
         InstrumentedHeapFile table = new InstrumentedHeapFile(f, td);
         Database.getCatalog().addTable(table, SystemTestUtil.getUUID());
 

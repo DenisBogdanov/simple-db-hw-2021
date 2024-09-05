@@ -86,7 +86,7 @@ public class BTreeInternalPageTest extends SimpleDbTestBase {
     @Before
     public void addTable() {
         this.pid = new BTreePageId(-1, -1, BTreePageId.INTERNAL);
-        Database.getCatalog().addTable(new SkeletonFile(-1, Utility.getTupleDesc(2)), SystemTestUtil.getUUID());
+        Database.getCatalog().addTable(new SkeletonFile(-1, Utility.getIntTupleDesc(2)), SystemTestUtil.getUUID());
     }
 
     /**

@@ -44,7 +44,7 @@ public class BTreeRootPtrPageTest extends SimpleDbTestBase {
     @Before
     public void addTable() {
         this.pid = new BTreePageId(-1, 0, BTreePageId.ROOT_PTR);
-        Database.getCatalog().addTable(new TestUtil.SkeletonFile(-1, Utility.getTupleDesc(2)), SystemTestUtil.getUUID());
+        Database.getCatalog().addTable(new TestUtil.SkeletonFile(-1, Utility.getIntTupleDesc(2)), SystemTestUtil.getUUID());
     }
 
     /**

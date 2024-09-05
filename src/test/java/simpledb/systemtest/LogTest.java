@@ -38,11 +38,11 @@ public class LogTest extends SimpleDbTestBase {
     void insertRow(HeapFile hf, Transaction t, int v1)
             throws DbException, TransactionAbortedException {
         // Create a row to insert
-        TupleDesc twoIntColumns = Utility.getTupleDesc(2);
+        TupleDesc twoIntColumns = Utility.getIntTupleDesc(2);
         Tuple value = new Tuple(twoIntColumns);
         value.setField(0, new IntField(v1));
         value.setField(1, new IntField(0));
-        TupleIterator insertRow = new TupleIterator(Utility.getTupleDesc(2), Collections.singletonList(value));
+        TupleIterator insertRow = new TupleIterator(Utility.getIntTupleDesc(2), Collections.singletonList(value));
 
         // Insert the row
         Insert insert = new Insert(t.getId(), insertRow, hf.getId());

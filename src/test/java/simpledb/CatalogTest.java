@@ -27,8 +27,8 @@ public class CatalogTest extends SimpleDbTestBase {
     public void addTables() {
         Database.getCatalog().clear();
         nameThisTestRun = SystemTestUtil.getUUID();
-        Database.getCatalog().addTable(new TestUtil.SkeletonFile(id1, Utility.getTupleDesc(2)), nameThisTestRun);
-        Database.getCatalog().addTable(new TestUtil.SkeletonFile(id2, Utility.getTupleDesc(2)), name);
+        Database.getCatalog().addTable(new TestUtil.SkeletonFile(id1, Utility.getIntTupleDesc(2)), nameThisTestRun);
+        Database.getCatalog().addTable(new TestUtil.SkeletonFile(id2, Utility.getIntTupleDesc(2)), name);
     }
 
     /**
@@ -36,7 +36,7 @@ public class CatalogTest extends SimpleDbTestBase {
      */
     @Test
     public void getTupleDesc() {
-        TupleDesc expected = Utility.getTupleDesc(2);
+        TupleDesc expected = Utility.getIntTupleDesc(2);
         TupleDesc actual = Database.getCatalog().getTupleDesc(id1);
 
         assertEquals(expected, actual);
@@ -84,7 +84,7 @@ public class CatalogTest extends SimpleDbTestBase {
     @Test
     public void handleDuplicateNames() {
         int id3 = r.nextInt();
-        Database.getCatalog().addTable(new TestUtil.SkeletonFile(id3, Utility.getTupleDesc(2)), name);
+        Database.getCatalog().addTable(new TestUtil.SkeletonFile(id3, Utility.getIntTupleDesc(2)), name);
         assertEquals(id3, Database.getCatalog().getTableId(name));
     }
 
@@ -94,7 +94,7 @@ public class CatalogTest extends SimpleDbTestBase {
     @Test
     public void handleDuplicateIds() {
         String newName = SystemTestUtil.getUUID();
-        DbFile f = new TestUtil.SkeletonFile(id2, Utility.getTupleDesc(2));
+        DbFile f = new TestUtil.SkeletonFile(id2, Utility.getIntTupleDesc(2));
         Database.getCatalog().addTable(f, newName);
         assertEquals(newName, Database.getCatalog().getTableName(id2));
         assertEquals(f, Database.getCatalog().getDatabaseFile(id2));

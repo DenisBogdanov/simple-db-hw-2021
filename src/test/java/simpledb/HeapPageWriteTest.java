@@ -30,7 +30,7 @@ public class HeapPageWriteTest extends SimpleDbTestBase {
     @Before
     public void addTable() {
         this.pid = new HeapPageId(-1, -1);
-        Database.getCatalog().addTable(new TestUtil.SkeletonFile(-1, Utility.getTupleDesc(2)), SystemTestUtil.getUUID());
+        Database.getCatalog().addTable(new TestUtil.SkeletonFile(-1, Utility.getIntTupleDesc(2)), SystemTestUtil.getUUID());
     }
 
     /**

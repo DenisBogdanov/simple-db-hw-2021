@@ -253,7 +253,7 @@ public class QueryPlanVisualizer {
                 StringBuilder fields = new StringBuilder();
                 Iterator<TDItem> it = p.getTupleDesc().iterator();
                 while (it.hasNext())
-                    fields.append(it.next().fieldName).append(",");
+                    fields.append(it.next().getFieldName()).append(",");
                 fields = new StringBuilder(fields.substring(0, fields.length() - 1));
                 thisNode.text = String.format("%1$s(%2$s),card:%3$d", PROJECT, fields.toString(), p.getEstimatedCardinality());
                 int upBarShift = parentUpperBarStartShift;

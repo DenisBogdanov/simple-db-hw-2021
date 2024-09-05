@@ -67,7 +67,7 @@ public class JoinTest extends SimpleDbTestBase {
     public void getTupleDesc() {
         JoinPredicate pred = new JoinPredicate(0, Predicate.Op.EQUALS, 0);
         Join op = new Join(pred, scan1, scan2);
-        TupleDesc expected = Utility.getTupleDesc(width1 + width2);
+        TupleDesc expected = Utility.getIntTupleDesc(width1 + width2);
         TupleDesc actual = op.getTupleDesc();
         assertEquals(expected, actual);
     }

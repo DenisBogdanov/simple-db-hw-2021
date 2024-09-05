@@ -40,7 +40,7 @@ public class BTreeFileReadTest extends SimpleDbTestBase {
     @Before
     public void setUp() throws Exception {
         f = BTreeUtility.createRandomBTreeFile(2, 20, null, null, 0);
-        td = Utility.getTupleDesc(2);
+        td = Utility.getIntTupleDesc(2);
         tid = new TransactionId();
     }
 

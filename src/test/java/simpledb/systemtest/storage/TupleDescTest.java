@@ -1,6 +1,5 @@
-package simpledb;
+package simpledb.systemtest.storage;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.Assert;
 import org.junit.Test;
 import simpledb.common.Type;
@@ -16,38 +15,37 @@ import static org.junit.Assert.assertTrue;
 
 public class TupleDescTest extends SimpleDbTestBase {
 
-    /**
-     * Unit test for TupleDesc.combine()
-     */
     @Test
-    public void combine() {
-        TupleDesc td1, td2, td3;
+    public void correctlyMergesToTupleDescriptors() {
+        // GIVEN
+        var td1 = Utility.getIntTupleDesc(1, "td1");
+        var td2 = Utility.getIntTupleDesc(2, "td2");
 
-        td1 = Utility.getTupleDesc(1, "td1");
-        td2 = Utility.getTupleDesc(2, "td2");
-
-        // test td1.combine(td2)
-        td3 = TupleDesc.merge(td1, td2);
+        // td1 + td2
+        var td3 = TupleDesc.merge(td1, td2);
         assertEquals(3, td3.numFields());
         assertEquals(3 * Type.INT_TYPE.getLen(), td3.getSize());
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; ++i) {
             assertEquals(Type.INT_TYPE, td3.getFieldType(i));
+        }
         assertTrue(combinedStringArrays(td1, td2, td3));
 
-        // test td2.combine(td1)
+        // td2 + td1
         td3 = TupleDesc.merge(td2, td1);
         assertEquals(3, td3.numFields());
         assertEquals(3 * Type.INT_TYPE.getLen(), td3.getSize());
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; ++i) {
             assertEquals(Type.INT_TYPE, td3.getFieldType(i));
+        }
         assertTrue(combinedStringArrays(td2, td1, td3));
 
-        // test td2.combine(td2)
+        // td2 + td2
         td3 = TupleDesc.merge(td2, td2);
         assertEquals(4, td3.numFields());
         assertEquals(4 * Type.INT_TYPE.getLen(), td3.getSize());
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < 4; ++i) {
             assertEquals(Type.INT_TYPE, td3.getFieldType(i));
+        }
         assertTrue(combinedStringArrays(td2, td2, td3));
     }
 
@@ -80,7 +78,7 @@ public class TupleDescTest extends SimpleDbTestBase {
         int[] lengths = new int[]{1, 2, 1000};
 
         for (int len : lengths) {
-            TupleDesc td = Utility.getTupleDesc(len);
+            TupleDesc td = Utility.getIntTupleDesc(len);
             for (int i = 0; i < len; ++i)
                 assertEquals(Type.INT_TYPE, td.getFieldType(i));
         }
@@ -96,7 +94,7 @@ public class TupleDescTest extends SimpleDbTestBase {
 
         for (int len : lengths) {
             // Make sure you retrieve well-named fields
-            TupleDesc td = Utility.getTupleDesc(len, prefix);
+            TupleDesc td = Utility.getIntTupleDesc(len, prefix);
             for (int i = 0; i < len; ++i) {
                 assertEquals(i, td.fieldNameToIndex(prefix + i));
             }
@@ -118,7 +116,7 @@ public class TupleDescTest extends SimpleDbTestBase {
             }
 
             // Make sure you throw exception when all field names are null
-            td = Utility.getTupleDesc(len);
+            td = Utility.getIntTupleDesc(len);
             try {
                 td.fieldNameToIndex(prefix);
                 Assert.fail("no fields are named, so you can't find it");
@@ -136,7 +134,7 @@ public class TupleDescTest extends SimpleDbTestBase {
         int[] lengths = new int[]{1, 2, 1000};
 
         for (int len : lengths) {
-            TupleDesc td = Utility.getTupleDesc(len);
+            TupleDesc td = Utility.getIntTupleDesc(len);
             assertEquals(len * Type.INT_TYPE.getLen(), td.getSize());
         }
     }
@@ -149,7 +147,7 @@ public class TupleDescTest extends SimpleDbTestBase {
         int[] lengths = new int[]{1, 2, 1000};
 
         for (int len : lengths) {
-            TupleDesc td = Utility.getTupleDesc(len);
+            TupleDesc td = Utility.getIntTupleDesc(len);
             assertEquals(len, td.numFields());
         }
     }
@@ -178,13 +176,6 @@ public class TupleDescTest extends SimpleDbTestBase {
         assertNotEquals(intString, singleInt2);
         assertEquals(intString, intString2);
         assertEquals(intString2, intString);
-    }
-
-    /**
-     * JUnit suite target
-     */
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(TupleDescTest.class);
     }
 }
 

@@ -51,13 +51,13 @@ public class TestUtil {
         int i = 0;
         List<Tuple> tuplist = new ArrayList<>();
         while (i < tupdata.length) {
-            Tuple tup = new Tuple(Utility.getTupleDesc(width));
+            Tuple tup = new Tuple(Utility.getIntTupleDesc(width));
             for (int j = 0; j < width; ++j)
                 tup.setField(j, getField(tupdata[i++]));
             tuplist.add(tup);
         }
 
-        TupleIterator result = new TupleIterator(Utility.getTupleDesc(width), tuplist);
+        TupleIterator result = new TupleIterator(Utility.getIntTupleDesc(width), tuplist);
         result.open();
         return result;
     }
@@ -294,7 +294,7 @@ public class TestUtil {
         }
 
         public TupleDesc getTupleDesc() {
-            return Utility.getTupleDesc(width);
+            return Utility.getIntTupleDesc(width);
         }
 
         protected Tuple readNext() {

@@ -18,10 +18,13 @@ import java.util.UUID;
  * Helper methods used for testing and implementing random features.
  */
 public class Utility {
+    private Utility() {
+    }
+
     /**
      * @return a Type array of length len populated with Type.INT_TYPE
      */
-    public static Type[] getTypes(int len) {
+    public static Type[] getIntTypes(int len) {
         Type[] types = new Type[len];
         for (int i = 0; i < len; ++i)
             types[i] = Type.INT_TYPE;
@@ -43,15 +46,15 @@ public class Utility {
      * @return a TupleDesc with n fields of type Type.INT_TYPE, each named
      * name + n (name1, name2, etc.).
      */
-    public static TupleDesc getTupleDesc(int n, String name) {
-        return new TupleDesc(getTypes(n), getStrings(n, name));
+    public static TupleDesc getIntTupleDesc(int n, String name) {
+        return new TupleDesc(getIntTypes(n), getStrings(n, name));
     }
 
     /**
      * @return a TupleDesc with n fields of type Type.INT_TYPE
      */
-    public static TupleDesc getTupleDesc(int n) {
-        return new TupleDesc(getTypes(n));
+    public static TupleDesc getIntTupleDesc(int n) {
+        return new TupleDesc(getIntTypes(n));
     }
 
     /**
@@ -59,7 +62,7 @@ public class Utility {
      * RecordId(HeapPageId(1,2), 3)
      */
     public static Tuple getHeapTuple(int n) {
-        Tuple tup = new Tuple(getTupleDesc(1));
+        Tuple tup = new Tuple(getIntTupleDesc(1));
         tup.setRecordId(new RecordId(new HeapPageId(1, 2), 3));
         tup.setField(0, new IntField(n));
         return tup;
@@ -70,7 +73,7 @@ public class Utility {
      * and RecordId(HeapPageId(1, 2), 3)
      */
     public static Tuple getHeapTuple(int[] tupdata) {
-        Tuple tup = new Tuple(getTupleDesc(tupdata.length));
+        Tuple tup = new Tuple(getIntTupleDesc(tupdata.length));
         tup.setRecordId(new RecordId(new HeapPageId(1, 2), 3));
         for (int i = 0; i < tupdata.length; ++i)
             tup.setField(i, new IntField(tupdata[i]));
@@ -82,7 +85,7 @@ public class Utility {
      * with RecordId(HeapPageId(1, 2), 3)
      */
     public static Tuple getHeapTuple(int n, int width) {
-        Tuple tup = new Tuple(getTupleDesc(width));
+        Tuple tup = new Tuple(getIntTupleDesc(width));
         tup.setRecordId(new RecordId(new HeapPageId(1, 2), 3));
         for (int i = 0; i < width; ++i)
             tup.setField(i, new IntField(n));
@@ -100,7 +103,7 @@ public class Utility {
             System.out.println("get Hash Tuple has the wrong length~");
             System.exit(1);
         }
-        Tuple tup = new Tuple(getTupleDesc(width));
+        Tuple tup = new Tuple(getIntTupleDesc(width));
         for (int i = 0; i < width; ++i)
             tup.setField(i, new IntField(tupledata[i]));
         return tup;
@@ -144,7 +147,7 @@ public class Utility {
      */
     public static HeapFile openHeapFile(int cols, File f) {
         // create the HeapFile and add it to the catalog
-        TupleDesc td = getTupleDesc(cols);
+        TupleDesc td = getIntTupleDesc(cols);
         HeapFile hf = new HeapFile(f, td);
         Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
         return hf;
@@ -159,7 +162,7 @@ public class Utility {
 
     public static HeapFile openHeapFile(int cols, String colPrefix, File f) {
         // create the HeapFile and add it to the catalog
-        TupleDesc td = getTupleDesc(cols, colPrefix);
+        TupleDesc td = getIntTupleDesc(cols, colPrefix);
         return openHeapFile(cols, colPrefix, f, td);
     }
 

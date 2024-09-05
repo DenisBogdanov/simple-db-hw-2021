@@ -240,7 +240,7 @@ public class BTreeScanTest extends SimpleDbTestBase {
         int keyField = 0;
         BTreeFile f = BTreeUtility.createBTreeFile(2, LEAF_PAGES * 502, null, tuples, keyField);
         tuples.sort(new TupleComparator(keyField));
-        TupleDesc td = Utility.getTupleDesc(2);
+        TupleDesc td = Utility.getIntTupleDesc(2);
         InstrumentedBTreeFile table = new InstrumentedBTreeFile(f.getFile(), keyField, td);
         Database.getCatalog().addTable(table, SystemTestUtil.getUUID());
 
