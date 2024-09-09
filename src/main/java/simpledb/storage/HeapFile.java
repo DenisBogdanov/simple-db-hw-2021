@@ -25,16 +25,16 @@ import java.util.List;
  */
 public class HeapFile implements DbFile {
     private final File file;
-    private final TupleDesc tupleDescription;
+    private final TupleDesc tupleDescriptor;
 
     /**
      * Constructs a heap file backed by the specified file.
      *
      * @param file the file that stores the on-disk backing store for this heap file.
      */
-    public HeapFile(File file, TupleDesc tupleDescription) {
+    public HeapFile(File file, TupleDesc tupleDescriptor) {
         this.file = file;
-        this.tupleDescription = tupleDescription;
+        this.tupleDescriptor = tupleDescriptor;
     }
 
     /**
@@ -65,7 +65,7 @@ public class HeapFile implements DbFile {
      */
     @Override
     public TupleDesc getTupleDesc() {
-        return tupleDescription;
+        return tupleDescriptor;
     }
 
     // see DbFile.java for javadocs

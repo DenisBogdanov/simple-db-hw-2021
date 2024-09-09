@@ -1,11 +1,9 @@
-package simpledb;
+package simpledb.common;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import simpledb.common.Database;
-import simpledb.common.Utility;
+import simpledb.TestUtil;
 import simpledb.storage.DbFile;
 import simpledb.storage.TupleDesc;
 import simpledb.systemtest.SimpleDbTestBase;
@@ -98,13 +96,6 @@ public class CatalogTest extends SimpleDbTestBase {
         Database.getCatalog().addTable(f, newName);
         assertEquals(newName, Database.getCatalog().getTableName(id2));
         assertEquals(f, Database.getCatalog().getDatabaseFile(id2));
-    }
-
-    /**
-     * JUnit suite target
-     */
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(CatalogTest.class);
     }
 }
 

@@ -85,8 +85,8 @@ You should see output similar to:
  build output...
 
 test:
-    [junit] Running simpledb.CatalogTest
-    [junit] Testsuite: simpledb.CatalogTest
+    [junit] Running simpledb.common.CatalogTest
+    [junit] Testsuite: simpledb.common.CatalogTest
     [junit] Tests run: 2, Failures: 0, Errors: 2, Time elapsed: 0.037 sec
     [junit] Tests run: 2, Failures: 0, Errors: 2, Time elapsed: 0.037 sec
 

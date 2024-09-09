@@ -1,13 +1,7 @@
-package simpledb.systemtest.storage;
+package simpledb.storage;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 import simpledb.common.Utility;
-import simpledb.storage.HeapPageId;
-import simpledb.storage.IntField;
-import simpledb.storage.RecordId;
-import simpledb.storage.Tuple;
-import simpledb.storage.TupleDesc;
 import simpledb.systemtest.SimpleDbTestBase;
 
 import static org.junit.Assert.assertEquals;
@@ -62,13 +56,6 @@ public class TupleTest extends SimpleDbTestBase {
                     "RecordId.equals() not being implemented.  This is not required for Lab 1, " +
                     "but should pass when you do implement the RecordId class.");
         }
-    }
-
-    /**
-     * JUnit suite target
-     */
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(TupleTest.class);
     }
 }
 

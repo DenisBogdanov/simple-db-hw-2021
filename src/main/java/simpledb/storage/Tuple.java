@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 /**
  * Tuple maintains information about the contents of a tuple. Tuples have a
- * specified schema specified by a TupleDesc object and contain Field objects
+ * schema specified by a {@link TupleDesc} object and contain Field objects
  * with the data for each field.
  */
 public class Tuple implements Serializable {
@@ -50,21 +50,21 @@ public class Tuple implements Serializable {
     /**
      * Set the RecordId information for this tuple.
      *
-     * @param rid the new RecordId for this tuple.
+     * @param recordId the new RecordId for this tuple.
      */
-    public void setRecordId(@Nullable RecordId rid) {
-        this.recordId = rid;
+    public void setRecordId(@Nullable RecordId recordId) {
+        this.recordId = recordId;
     }
 
     /**
      * Change the value of the ith field of this tuple.
      *
-     * @param i index of the field to change. It must be a valid index.
-     * @param f new value for the field.
+     * @param i     index of the field to change. It must be a valid index.
+     * @param field new value for the field.
      */
-    public void setField(int i, Field f) {
+    public void setField(int i, Field field) {
         Preconditions.checkIndex(i, fields.length);
-        fields[i] = f;
+        fields[i] = field;
     }
 
     /**

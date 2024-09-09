@@ -1,10 +1,9 @@
-package simpledb.systemtest.storage;
+package simpledb.storage;
 
 import org.junit.Assert;
 import org.junit.Test;
 import simpledb.common.Type;
 import simpledb.common.Utility;
-import simpledb.storage.TupleDesc;
 import simpledb.systemtest.SimpleDbTestBase;
 
 import java.util.NoSuchElementException;
